@@ -1,17 +1,16 @@
 
 'use server';
 
-import { initializeApp, getApps, cert } from 'firebase-admin/app';
+import { initializeApp, getApps } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
 import { type Recipe, type GroceryList } from './types';
-import * as fs from 'fs';
-import * as path from 'path';
 
 // Function to initialize Firebase Admin SDK
 function initializeFirebaseAdmin() {
   if (getApps().length === 0) {
     // In a deployed App Hosting environment, applicationDefault() will find the credentials.
+    // In local development, it requires the GOOGLE_APPLICATION_CREDENTIALS env var.
     initializeApp();
   }
 }
