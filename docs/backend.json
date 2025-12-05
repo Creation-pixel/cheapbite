@@ -1,0 +1,391 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user profile in the application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user.",
+          "format": "uuid"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The display name of the user."
+        },
+        "email": {
+          "type": "string",
+          "description": "The email address of the user.",
+          "format": "email"
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "URL of the user's profile picture.",
+          "format": "uri"
+        },
+        "bio": {
+          "type": "string",
+          "description": "A short biography or description of the user."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the user was created.",
+          "format": "date-time"
+        },
+        "followersCount": {
+          "type": "number",
+          "description": "The number of followers the user has."
+        },
+        "followingCount": {
+          "type": "number",
+          "description": "The number of users the user is following."
+        }
+      },
+      "required": [
+        "id",
+        "displayName",
+        "email",
+        "createdAt"
+      ]
+    },
+    "Follow": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Follow",
+      "type": "object",
+      "description": "Represents the following relationship between two users.",
+      "properties": {
+        "followerId": {
+          "type": "string",
+          "description": "ID of the user who is following.",
+          "format": "uuid"
+        },
+        "followingId": {
+          "type": "string",
+          "description": "ID of the user being followed.",
+          "format": "uuid"
+        },
+        "followedAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the user was followed.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "followerId",
+        "followingId",
+        "followedAt"
+      ]
+    },
+    "Message": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Message",
+      "type": "object",
+      "description": "Represents a message sent between two users.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the message.",
+          "format": "uuid"
+        },
+        "senderId": {
+          "type": "string",
+          "description": "ID of the user who sent the message.",
+          "format": "uuid"
+        },
+        "receiverId": {
+          "type": "string",
+          "description": "ID of the user who received the message.",
+          "format": "uuid"
+        },
+        "text": {
+          "type": "string",
+          "description": "The content of the message."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the message was sent.",
+          "format": "date-time"
+        },
+        "read": {
+          "type": "boolean",
+          "description": "Indicates whether the message has been read by the receiver."
+        }
+      },
+      "required": [
+        "id",
+        "senderId",
+        "receiverId",
+        "text",
+        "createdAt"
+      ]
+    },
+    "Post": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Post",
+      "type": "object",
+      "description": "Represents a post created by a user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the post.",
+          "format": "uuid"
+        },
+        "authorId": {
+          "type": "string",
+          "description": "ID of the user who created the post.",
+          "format": "uuid"
+        },
+        "content": {
+          "type": "string",
+          "description": "The text content of the post."
+        },
+        "mediaURL": {
+          "type": "string",
+          "description": "URL of the media attached to the post (image/video).",
+          "format": "uri"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the post was created.",
+          "format": "date-time"
+        },
+        "likeCount": {
+          "type": "number",
+          "description": "The number of likes the post has."
+        },
+        "commentCount": {
+          "type": "number",
+          "description": "The number of comments the post has."
+        }
+      },
+      "required": [
+        "id",
+        "authorId",
+        "content",
+        "createdAt"
+      ]
+    },
+    "Comment": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Comment",
+      "type": "object",
+      "description": "Represents a comment on a post.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the comment.",
+          "format": "uuid"
+        },
+        "postId": {
+          "type": "string",
+          "description": "ID of the post the comment belongs to.",
+          "format": "uuid"
+        },
+        "authorId": {
+          "type": "string",
+          "description": "ID of the user who created the comment.",
+          "format": "uuid"
+        },
+        "text": {
+          "type": "string",
+          "description": "The content of the comment."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the comment was created.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "postId",
+        "authorId",
+        "text",
+        "createdAt"
+      ]
+    },
+    "Event": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Event",
+      "type": "object",
+      "description": "Represents a calendar event or invitation.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the event.",
+          "format": "uuid"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the event."
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the event."
+        },
+        "createdBy": {
+          "type": "string",
+          "description": "ID of the user who created the event.",
+          "format": "uuid"
+        },
+        "startTime": {
+          "type": "string",
+          "description": "Timestamp indicating the start time of the event.",
+          "format": "date-time"
+        },
+        "endTime": {
+          "type": "string",
+          "description": "Timestamp indicating the end time of the event.",
+          "format": "date-time"
+        },
+        "location": {
+          "type": "string",
+          "description": "The location of the event."
+        },
+        "invited": {
+          "type": "array",
+          "description": "An array of user IDs who are invited to the event.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "attendees": {
+          "type": "array",
+          "description": "An array of user IDs who are attending the event.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "status": {
+          "type": "string",
+          "description": "The status of the event (e.g., 'scheduled', 'cancelled')."
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "description",
+        "createdBy",
+        "startTime",
+        "endTime"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profile information.  Path-based ownership for private user data.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/follows/{userId}/following/{targetUserId}",
+        "definition": {
+          "entityName": "Follow",
+          "schema": {
+            "$ref": "#/backend/entities/Follow"
+          },
+          "description": "Represents the following relationship between two users.  Path-based ownership: Only the user can manage their following list.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The ID of the user who is following."
+            },
+            {
+              "name": "targetUserId",
+              "description": "The ID of the user being followed."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/messages/{messageId}",
+        "definition": {
+          "entityName": "Message",
+          "schema": {
+            "$ref": "#/backend/entities/Message"
+          },
+          "description": "Stores individual messages between users. Security rules will ensure only sender and receiver can access the message. Consider a subcollection under chats/{chatId} for scalability.",
+          "params": [
+            {
+              "name": "messageId",
+              "description": "The unique identifier for the message."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/posts/{postId}",
+        "definition": {
+          "entityName": "Post",
+          "schema": {
+            "$ref": "#/backend/entities/Post"
+          },
+          "description": "Stores posts created by users.  Public read access; author-only write access.",
+          "params": [
+            {
+              "name": "postId",
+              "description": "The unique identifier for the post."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/posts/{postId}/comments/{commentId}",
+        "definition": {
+          "entityName": "Comment",
+          "schema": {
+            "$ref": "#/backend/entities/Comment"
+          },
+          "description": "Stores comments on posts. Public read access; author-only write access.",
+          "params": [
+            {
+              "name": "postId",
+              "description": "The unique identifier for the post."
+            },
+            {
+              "name": "commentId",
+              "description": "The unique identifier for the comment."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/events/{eventId}",
+        "definition": {
+          "entityName": "Event",
+          "schema": {
+            "$ref": "#/backend/entities/Event"
+          },
+          "description": "Stores calendar events. Includes the `invited` array for authorization independence.",
+          "params": [
+            {
+              "name": "eventId",
+              "description": "The unique identifier for the event."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to support a social media application with features like user authentication, messaging, following, posts, comments, and calendar events. The design prioritizes authorization independence through denormalization and structural segregation to ensure secure and scalable data access.  \\n\\n**Authorization Independence:** The design avoids `get()` calls in security rules by denormalizing relevant authorization data. For example, the `events` collection includes the `invited` array, eliminating the need to fetch user data to verify access.\\n\\n**Structural Segregation:** Different data types with varying access requirements are stored in separate collections, simplifying security rules. For instance, user profiles are stored in `/users/{userId}`, while public posts are in `/posts/{postId}`.\\n\\n**Access Modeling:** Path-based ownership is employed for user-owned data (e.g., `/users/{userId}/following/{targetUserId}`).  Membership maps are used where appropriate, and existence checks in dedicated collections will be used for global roles (if roles are later added).  \\n\\n**QAPs (Rules are not Filters):** This design enables secure `list` operations by ensuring that each collection contains documents with homogeneous security postures. For example, listing posts is secure because all documents in the `/posts` collection have the same read access requirements.\\n\\n**Invariants:**  The structure supports data integrity through explicit ownership (e.g., `authorId` in `posts`) and timestamps for creation and modification."
+  }
+}

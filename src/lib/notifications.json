@@ -1,0 +1,35 @@
+
+{
+    "notifications": {
+        "cause": [
+            {
+                "title": "Support a Legacy",
+                "description": "Our app is inspired by a real family-owned Jamaican restaurant from the 90s. Your support can help bring it back.",
+                "link": "/offer-help"
+            },
+            {
+                "title": "Become a Part of the Story",
+                "description": "Have skills in marketing, community management, or design? We'd love your help to grow the CheapBite community.",
+                "link": "/offer-help"
+            }
+        ],
+        "cuisine": [
+            {
+                "title": "Did You Know?",
+                "description": "Jamaican Jerk cooking is a slow-roasting technique over pimento wood, giving it a unique smoky and spicy flavor."
+            },
+            {
+                "title": "Cuisine Spotlight: Italian",
+                "description": "Beyond pizza and pasta! Try exploring regional Italian dishes like Osso Buco from Milan or Arancini from Sicily."
+            },
+            {
+                "title": "Cuisine Spotlight: Mediterranean",
+                "description": "Full of fresh vegetables, olive oil, and herbs, this healthy cuisine is perfect for light and flavorful meals."
+            },
+            {
+                "title": "Quick Tip: Fresh Herbs",
+                "description": "Store fresh herbs like cilantro and parsley in a jar with a little water at the bottom, covered with a plastic bag, to keep them fresh for weeks."
+            }
+        ]
+    }
+}

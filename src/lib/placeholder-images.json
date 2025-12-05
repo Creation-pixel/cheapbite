@@ -1,0 +1,70 @@
+{
+  "placeholderImages": [
+    {
+      "id": "user1",
+      "description": "Avatar for user 1",
+      "imageUrl": "https://images.unsplash.com/photo-1600180758890-6b94519a8ba6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwZXJzb24lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NTkzOTU3Nzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "user2",
+      "description": "Avatar for user 2",
+      "imageUrl": "https://images.unsplash.com/photo-1719087358997-12957d0859e2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHx3b21hbiUyMHNtaWxpbmd8ZW58MHx8fHwxNzU5NDU5NjcyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman smiling"
+    },
+    {
+      "id": "user3",
+      "description": "Avatar for user 3",
+      "imageUrl": "https://images.unsplash.com/photo-1627554785796-f9646d15c2da?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxtYW4lMjBnbGFzc2VzfGVufDB8fHx8MTc1OTM2Mzk2NXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "man glasses"
+    },
+    {
+      "id": "post1",
+      "description": "Image for post 1",
+      "imageUrl": "https://images.unsplash.com/photo-1617634667039-8e4cb277ab46?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxuYXR1cmUlMjBsYW5kc2NhcGV8ZW58MHx8fHwxNzU5NDYzMDc2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "nature landscape"
+    },
+    {
+      "id": "post2",
+      "description": "Image for post 2",
+      "imageUrl": "https://images.unsplash.com/photo-1502921982-f2471545c93b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxjaXR5JTIwc2t5bGluZXxlbnwwfHx8fDE3NTkzNzIzMzl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "city skyline"
+    },
+    {
+      "id": "post3",
+      "description": "Image for post 3",
+      "imageUrl": "https://images.unsplash.com/photo-1622542796254-5b9c46ab0d2f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxhYnN0cmFjdCUyMGFydHxlbnwwfHx8fDE3NTkzODIwMDB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "abstract art"
+    },
+    {
+      "id": "cover_photo",
+      "description": "Default cover photo",
+      "imageUrl": "https://images.unsplash.com/photo-1616962029871-e32444c1531f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxibHVlJTIwd2F2ZXN8ZW58MHx8fHwxNzU5NDY0NTkxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "blue waves"
+    },
+    {
+      "id": "login-bg-1",
+      "description": "Login background image 1",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/studio-9102275022-76c3c.firebasestorage.app/o/Legacy-Restaurant%2Flogin1207500809.webp?alt=media&token=82838ac7-70af-4e7b-9bfa-6e8147640ece",
+      "imageHint": "abstract gradient"
+    },
+    {
+      "id": "login-bg-2",
+      "description": "Login background image 2",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/studio-9102275022-76c3c.firebasestorage.app/o/Legacy-Restaurant%2Flogin2156725611.webp?alt=media&token=a21640e2-fef5-429e-9157-e17f2d43ed0b",
+      "imageHint": "city night"
+    },
+    {
+      "id": "login-bg-3",
+      "description": "Login background image 3",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/studio-9102275022-76c3c.firebasestorage.app/o/Legacy-Restaurant%2Flogin2194609145.webp?alt=media&token=1c79706f-ad89-4128-a67e-2fdd5f10fb24",
+      "imageHint": "blue abstract"
+    },
+    {
+      "id": "login-bg-4",
+      "description": "Login background image 4",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/studio-9102275022-76c3c.firebasestorage.app/o/Legacy-Restaurant%2Flogin987937546.webp?alt=media&token=5ce718f9-d327-47f9-a062-a7cde5c23e3e",
+      "imageHint": "pastel texture"
+    }
+  ]
+}

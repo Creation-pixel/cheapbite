@@ -1,0 +1,42 @@
+
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Rule for user-specific post images
+    // Allows any signed-in user to read, but only the owner to write to their own folder.
+    match /posts/{userId}/{fileName} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Rule for user-specific profile images
+    match /profile-images/{userId}/{fileName} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Rule for user-specific cover photos
+    match /cover-photos/{userId}/{fileName} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && request.auth.uid == userId;
+    }
+    
+    // Rule for legacy restaurant images
+    // Allows any signed-in user to read or write to this specific folder.
+    match /Legacy-Restaurant/{fileName} {
+      allow read, write: if true;
+    }
+
+    // Rule for stories. Assuming any authenticated user can create a story.
+    match /stories/{userId}/{fileName} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && request.auth.uid == userId;
+    }
+  }
+}

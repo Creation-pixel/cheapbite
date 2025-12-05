@@ -1,0 +1,202 @@
+/**
+ * Core Philosophy: This ruleset enforces a multi-pattern security model for a social media application.
+ * It combines strict user-ownership for private data, public-read/owner-write for shared content, and
+ * collaborator-based access for shared resources like events and messages.
+ *
+ * Data Structure: The data is organized into top-level collections for major features (/users, /posts, /messages, /events)
+ * to facilitate clean, performant queries. User-specific relationship data, like follows, is nested under the
+ * user's path (/follows/{userId}/following/...).
+ *
+ * Key Security Decisions:
+ * - User Listing is Disabled: It is not possible to query the entire /users collection.
+ * - Authorization Independence: Rules rely on denormalized fields within documents (e.g., `authorId`, `invited`, `senderId`)
+ *   to make authorization decisions without costly cross-document `get()` calls.
+ * - Path-Based Ownership: Data that exclusively belongs to a user (like their 'following' list) is secured using their UID in the document path.
+ * - Secure by Default: Collections containing private or mixed-privacy data (like /messages and /events) explicitly disable `list` operations to prevent data leakage,
+ *   requiring clients to build specific, targeted queries.
+ *
+ * Denormalization for Authorization:
+ * - Events: Each `/events/{eventId}` document contains a `createdBy` field and an `invited` array. This allows rules to grant access to the creator and invitees directly.
+ * - Messages: Each `/messages/{messageId}` document contains a `senderId` and `receiverId`. This allows rules to grant access only to the two participants of the conversation.
+ * - Posts/Comments: Each document contains an `authorId`, ensuring that only the original author can modify or delete their content.
+ *
+ * Structural Segregation:
+ * - Public content (`/posts`) is stored in a separate top-level collection from private user data (`/users/{userId}`). This separation allows public `list` operations
+ *   on the posts feed without compromising user privacy.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ----------------------------------------------------------------------
+    // Helper Functions
+    // ----------------------------------------------------------------------
+
+    /**
+     * Returns true if the user is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Returns true if the authenticated user's UID matches the provided userId.
+     * This is the primary function for checking document ownership.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * Returns true if a document exists and the user is the owner.
+     * Used for safe update and delete operations.
+     */
+    function isExistingOwner(userId) {
+      return resource != null && isOwner(userId);
+    }
+
+    /**
+     * On create, validates that the user is setting themselves as the owner/author.
+     */
+    function isCreatingAsSelf(ownerField) {
+      return request.resource.data[ownerField] == request.auth.uid;
+    }
+
+    /**
+     * On update, ensures a critical relationship field (like an owner or ID) is immutable.
+     */
+    function isFieldImmutable(fieldName) {
+      return request.resource.data[fieldName] == resource.data[fieldName];
+    }
+
+    /**
+     * Returns true if the user is the sender or receiver of a message.
+     */
+    function isMessageParticipant(message) {
+      return isSignedIn() && (request.auth.uid == message.senderId || request.auth.uid == message.receiverId);
+    }
+
+    /**
+     * Returns true if the user is the creator of an event.
+     */
+    function isEventCreator(eventDoc) {
+      return isSignedIn() && request.auth.uid == eventDoc.createdBy;
+    }
+    
+    /**
+     * Returns true if the user is in the event's 'invited' list.
+     */
+    function isInvitedToEvent(eventDoc) {
+      return isSignedIn() && request.auth.uid in eventDoc.invited;
+    }
+
+    // ----------------------------------------------------------------------
+    // Collection Rules
+    // ----------------------------------------------------------------------
+
+    /**
+     * @description Manages user profile documents.
+     * @path /users/{userId}
+     * @allow (get) Any user can read any other user's profile.
+     * @allow (create) A new user can create their own profile document.
+     * @allow (update) A user can only update their own profile.
+     * @deny (list) No user can list all users in the system.
+     * @deny (update) A user cannot update another user's profile.
+     * @principle Restricts access to a user's own data tree and validates relational integrity.
+     */
+    match /users/{userId} {
+      allow get: if true;
+      allow list: if false;
+      allow create: if isOwner(userId) && isCreatingAsSelf('id');
+      allow update: if isExistingOwner(userId) && isFieldImmutable('id');
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Manages a user's list of who they are following.
+     * @path /follows/{userId}/following/{targetUserId}
+     * @allow (create) A user can add a follow relationship for themselves.
+     * @allow (list) A user can list all the people they are following.
+     * @allow (delete) A user can remove a follow relationship for themselves.
+     * @deny (create) A user cannot make another user follow someone.
+     * @deny (update) Follow relationships are immutable; delete and re-create instead.
+     * @principle Enforces strict path-based ownership for a user's private subcollections.
+     */
+    match /follows/{userId}/following/{targetUserId} {
+      allow get, list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.followerId == userId && request.resource.data.followingId == targetUserId;
+      allow update: if false;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Manages private messages between users.
+     * @path /messages/{messageId}
+     * @allow (get) The sender or receiver can read a message.
+     * @allow (create) An authenticated user can send a message, setting themselves as the sender.
+     * @allow (update) The sender or receiver can update a message (e.g., to mark as read).
+     * @deny (list) No user can list all messages in the system.
+     * @deny (get) A user who is not part of the conversation cannot read the message.
+     * @principle Implements closed collaborator access based on denormalized `senderId` and `receiverId` fields.
+     */
+    match /messages/{messageId} {
+      allow get: if isMessageParticipant(resource.data);
+      allow list: if false;
+      allow create: if isSignedIn() && isCreatingAsSelf('senderId');
+      allow update: if resource != null && isMessageParticipant(resource.data) && isFieldImmutable('senderId') && isFieldImmutable('receiverId');
+      allow delete: if resource != null && isOwner(resource.data.senderId);
+    }
+
+    /**
+     * @description Manages public posts created by users.
+     * @path /posts/{postId}
+     * @allow (get, list) Any user, signed in or not, can read all posts.
+     * @allow (create) An authenticated user can create a new post.
+     * @allow (update, delete) Only the original author can update or delete their post.
+     * @deny (update, delete) A user cannot modify another user's post.
+     * @principle Implements a "Public Read with Owner-Only Writes" pattern.
+     */
+    match /posts/{postId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && isCreatingAsSelf('authorId');
+      allow update: if resource != null && isOwner(resource.data.authorId) && isFieldImmutable('authorId');
+      allow delete: if resource != null && isOwner(resource.data.authorId);
+
+      /**
+       * @description Manages public comments on a post.
+       * @path /posts/{postId}/comments/{commentId}
+       * @allow (get, list) Any user, signed in or not, can read comments.
+       * @allow (create) An authenticated user can create a comment on a post.
+       * @allow (update, delete) Only the original author can update or delete their comment.
+       * @deny (update, delete) A user cannot modify another user's comment.
+       * @principle Inherits public readability and enforces document ownership for writes.
+       */
+      match /comments/{commentId} {
+        allow get, list: if true;
+        allow create: if isSignedIn() && isCreatingAsSelf('authorId') && request.resource.data.postId == postId;
+        allow update: if resource != null && isOwner(resource.data.authorId) && isFieldImmutable('authorId') && isFieldImmutable('postId');
+        allow delete: if resource != null && isOwner(resource.data.authorId);
+      }
+    }
+
+    /**
+     * @description Manages collaborative events.
+     * @path /events/{eventId}
+     * @allow (get) The event creator or an invited user can read the event details.
+     * @allow (create) Any authenticated user can create a new event.
+     * @allow (update) The creator can update any part of the event. Invited users can also update, facilitating RSVPs.
+     * @allow (delete) Only the event creator can delete an event.
+     * @deny (list) No user can list all events in the system.
+     * @principle Implements shared access using a denormalized `createdBy` owner and `invited` collaborator list.
+     */
+    match /events/{eventId} {
+      allow get: if isEventCreator(resource.data) || isInvitedToEvent(resource.data);
+      allow list: if false;
+      allow create: if isSignedIn() && isCreatingAsSelf('createdBy');
+      // Update allows creator or invitee to modify. For prototyping, this allows RSVPs.
+      // Critical fields like 'createdBy' are protected from change.
+      allow update: if resource != null && (isEventCreator(resource.data) || isInvitedToEvent(resource.data)) && isFieldImmutable('createdBy');
+      allow delete: if resource != null && isEventCreator(resource.data);
+    }
+  }
+}

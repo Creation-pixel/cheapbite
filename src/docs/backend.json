@@ -1,0 +1,518 @@
+
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user profile in the application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user. (Primary Key)"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The user's display name."
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address.",
+          "format": "email"
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "URL of the user's profile image.",
+          "format": "uri"
+        },
+        "bio": {
+          "type": "string",
+          "description": "A short biography of the user."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the user account was created.",
+          "format": "date-time"
+        },
+        "followersCount": {
+          "type": "number",
+          "description": "The number of users following this user."
+        },
+        "followingCount": {
+          "type": "number",
+          "description": "The number of users this user is following."
+        },
+        "coverPhotoUrl": {
+          "type": "string",
+          "description": "URL of the user's cover photo.",
+          "format": "uri"
+        },
+        "tagline": {
+            "type": "string",
+            "description": "A custom tagline for the user's profile."
+        },
+        "accentColor": {
+            "type": "string",
+            "description": "A hex color code for personalizing the user's profile."
+        },
+        "websiteLink": {
+          "type": "string",
+          "description": "A URL to a user's personal website, store, or portfolio.",
+          "format": "uri"
+        },
+        "socialLink": {
+          "type": "string",
+          "description": "A URL to a user's primary social media profile (e.g., Instagram, Twitter).",
+          "format": "uri"
+        },
+        "gender": {
+            "type": "string",
+            "description": "The user's gender.",
+            "enum": ["male", "female", "other", "unspecified"]
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "Follow": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Follow",
+      "type": "object",
+      "description": "Represents a follow relationship between two users.",
+      "properties": {
+        "followerId": {
+          "type": "string",
+          "description": "Reference to the user who is following. (Relationship: User 1:N Follow)"
+        },
+        "followingId": {
+          "type": "string",
+          "description": "Reference to the user being followed. (Relationship: User 1:N Follow)"
+        },
+        "followedAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the follow relationship was created.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "followerId",
+        "followingId"
+      ]
+    },
+    "Message": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Message",
+      "type": "object",
+      "description": "Represents a message in a conversation between two users.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the message. (Primary Key)"
+        },
+        "senderId": {
+          "type": "string",
+          "description": "Reference to the user who sent the message. (Relationship: User 1:N Message)"
+        },
+        "receiverId": {
+          "type": "string",
+          "description": "Reference to the user who received the message. (Relationship: User 1:N Message)"
+        },
+        "text": {
+          "type": "string",
+          "description": "The content of the message."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the message was sent.",
+          "format": "date-time"
+        },
+        "read": {
+          "type": "boolean",
+          "description": "Indicates whether the message has been read by the receiver."
+        }
+      },
+      "required": [
+        "id",
+        "senderId",
+        "receiverId",
+        "text",
+        "createdAt"
+      ]
+    },
+    "Post": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Post",
+      "type": "object",
+      "description": "Represents a post created by a user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the post. (Primary Key)"
+        },
+        "authorId": {
+          "type": "string",
+          "description": "Reference to the user who created the post. (Relationship: User 1:N Post)"
+        },
+        "content": {
+          "type": "string",
+          "description": "The text content of the post."
+        },
+        "mediaURL": {
+          "type": "string",
+          "description": "URL of any media attached to the post (image, video).",
+          "format": "uri"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the post was created.",
+          "format": "date-time"
+        },
+        "likeCount": {
+          "type": "number",
+          "description": "The number of likes the post has received."
+        },
+        "commentCount": {
+          "type": "number",
+          "description": "The number of comments the post has received."
+        },
+        "tags": {
+          "type": "array",
+          "description": "An array of tags or flair for post categorization and search.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "externalVideoUrl": {
+          "type": "string",
+          "description": "URL to an external video (e.g., YouTube, TikTok).",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "authorId",
+        "content",
+        "createdAt"
+      ]
+    },
+    "Comment": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Comment",
+      "type": "object",
+      "description": "Represents a comment on a post.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the comment. (Primary Key)"
+        },
+        "postId": {
+          "type": "string",
+          "description": "Reference to the post this comment belongs to. (Relationship: Post 1:N Comment)"
+        },
+        "authorId": {
+          "type": "string",
+          "description": "Reference to the user who created the comment. (Relationship: User 1:N Comment)"
+        },
+        "text": {
+          "type": "string",
+          "description": "The text content of the comment."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the comment was created.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "postId",
+        "authorId",
+        "text",
+        "createdAt"
+      ]
+    },
+    "Event": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Event",
+      "type": "object",
+      "description": "Represents a calendar event.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the event. (Primary Key)"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the event."
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the event."
+        },
+        "createdBy": {
+          "type": "string",
+          "description": "Reference to the user who created the event. (Relationship: User 1:N Event)"
+        },
+        "startTime": {
+          "type": "string",
+          "description": "Timestamp indicating when the event starts.",
+          "format": "date-time"
+        },
+        "endTime": {
+          "type": "string",
+          "description": "Timestamp indicating when the event ends.",
+          "format": "date-time"
+        },
+        "location": {
+          "type": "string",
+          "description": "The location of the event."
+        },
+        "invited": {
+          "type": "array",
+          "description": "References to the users who are invited to the event. (Relationship: User N:N Event)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "attendees": {
+          "type": "array",
+          "description": "References to the users who are attending the event. (Relationship: User N:N Event)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "status": {
+          "type": "string",
+          "description": "The status of the event (scheduled, cancelled)."
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "description",
+        "createdBy",
+        "startTime",
+        "endTime",
+        "location"
+      ]
+    },
+    "ProductLabel": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Product Label",
+      "type": "object",
+      "description": "Represents an AI-analyzed product label card.",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier for the saved label." },
+        "productName": { "type": "string", "description": "The name of the product." },
+        "overallScore": { "type": "number", "description": "The final score from 0 to 100." },
+        "overallRisk": { "type": "string", "description": "The overall risk category." },
+        "summary": { "type": "string", "description": "A concise summary of the analysis." },
+        "savedAt": { "type": "string", "description": "Timestamp for when the label was saved.", "format": "date-time" }
+      },
+      "required": ["id", "productName", "overallScore", "overallRisk", "summary", "savedAt"]
+    },
+    "Volunteer": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Volunteer",
+      "type": "object",
+      "description": "Represents a volunteer application submission.",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier for the submission." },
+        "userId": { "type": "string", "description": "The UID of the user who submitted the form." },
+        "name": { "type": "string", "description": "The name of the user." },
+        "email": { "type": "string", "description": "The email of the user.", "format": "email" },
+        "message": { "type": "string", "description": "The user's message about how they'd like to help." },
+        "createdAt": { "type": "string", "description": "Timestamp for creation.", "format": "date-time" }
+      },
+      "required": ["id", "userId", "name", "email", "message", "createdAt"]
+    },
+    "Notification": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Notification",
+      "type": "object",
+      "description": "Represents a user notification for social interactions.",
+      "properties": {
+        "id": { "type": "string", "description": "Unique ID for the notification." },
+        "type": { "type": "string", "enum": ["like", "comment", "follow"], "description": "The type of notification." },
+        "senderId": { "type": "string", "description": "UID of the user who triggered the notification." },
+        "recipientId": { "type": "string", "description": "UID of the user who receives the notification." },
+        "postId": { "type": "string", "description": "ID of the relevant post (for likes and comments)." },
+        "read": { "type": "boolean", "description": "Whether the notification has been read." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp of the notification." }
+      },
+      "required": ["id", "type", "senderId", "recipientId", "read", "createdAt"]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profile data.  Path-based ownership allows users to read/write their own profile data.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/notifications/{notificationId}",
+        "definition": {
+          "entityName": "Notification",
+          "schema": {
+            "$ref": "#/backend/entities/Notification"
+          },
+          "description": "Stores notifications for a specific user. Writable by backend functions, readable by the owner.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            },
+            {
+              "name": "notificationId",
+              "description": "The unique identifier of the notification."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/productLabels/{labelId}",
+        "definition": {
+          "entityName": "ProductLabel",
+          "schema": {
+            "$ref": "#/backend/entities/ProductLabel"
+          },
+          "description": "Stores product labels saved by a user. Writable only by the user.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            },
+            {
+              "name": "labelId",
+              "description": "The unique identifier of the saved label."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/follows/{userId}/following/{targetUserId}",
+        "definition": {
+          "entityName": "Follow",
+          "schema": {
+            "$ref": "#/backend/entities/Follow"
+          },
+          "description": "Stores follow relationships.  Path-based ownership ensures only the user can modify their following list.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user who is following."
+            },
+            {
+              "name": "targetUserId",
+              "description": "The unique identifier of the user being followed."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/messages/{messageId}",
+        "definition": {
+          "entityName": "Message",
+          "schema": {
+            "$ref": "#/backend/entities/Message"
+          },
+          "description": "Stores messages between users.  Includes denormalized 'senderId' and 'receiverId' for authorization independence.",
+          "params": [
+            {
+              "name": "messageId",
+              "description": "The unique identifier of the message."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/posts/{postId}",
+        "definition": {
+          "entityName": "Post",
+          "schema": {
+            "$ref": "#/backend/entities/Post"
+          },
+          "description": "Stores posts created by users. The `authorId` field is used in rules for update/delete.",
+          "params": [
+            {
+              "name": "postId",
+              "description": "The unique identifier of the post."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/posts/{postId}/comments/{commentId}",
+        "definition": {
+          "entityName": "Comment",
+          "schema": {
+            "$ref": "#/backend/entities/Comment"
+          },
+          "description": "Stores comments for a given post. Uses `authorId` field for write access control.",
+          "params": [
+            {
+              "name": "postId",
+              "description": "The unique identifier of the post."
+            },
+            {
+              "name": "commentId",
+              "description": "The unique identifier of the comment."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/events/{eventId}",
+        "definition": {
+          "entityName": "Event",
+          "schema": {
+            "$ref": "#/backend/entities/Event"
+          },
+          "description": "Stores event data. Includes denormalized 'invited' array and 'createdBy' fields for authorization independence.",
+          "params": [
+            {
+              "name": "eventId",
+              "description": "The unique identifier of the event."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/volunteers/{volunteerId}",
+        "definition": {
+          "entityName": "Volunteer",
+          "schema": {
+            "$ref": "#/backend/entities/Volunteer"
+          },
+          "description": "Stores volunteer applications. Writable by any authenticated user, but not readable to ensure privacy.",
+          "params": [
+            {
+              "name": "volunteerId",
+              "description": "The unique identifier of the volunteer submission."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to address the 'list' permission error by ensuring that security rules can be evaluated efficiently without relying on complex `get()` operations, thus achieving Authorization Independence. This is done primarily through structural segregation and denormalization. \n\n1.  **Users:** User data is stored in `/users/{userId}`.  This path-based ownership simplifies read/write rules for user-specific data.\n\n2.  **Posts:** To enable secure and efficient `list` operations on `/posts`, a public-read approach is adopted. Authorization Independence is ensured because posts are not directly tied to user data, but the `authorId` is used to verify write access for updates/deletes.\n\n3.  **Comments:** Comments are nested under `/posts/{postId}/comments/{commentId}`. This simplifies data retrieval and ensures that comments are always associated with a post.  Similar to posts, `authorId` determines write access.\n\n4.  **Follows:** Follow relationships are stored under `/users/{userId}/following/{targetUserId}`.  This structure allows efficient querying of who a user is following. The structure intrinsically enforces that only the user can modify their following list.\n\n5.  **Messages:** Messages are stored in `/messages/{messageId}` with denormalized `senderId` and `receiverId` fields. The rules will allow a user to read messages where they are the sender or receiver. Alternatively, a `chats` collection could be used, but the flat `messages` collection provides similar security characteristics with less complexity.\n\n6.  **Events:** Events are stored in `/events/{eventId}`.  The `invited` and `createdBy` fields are used to control read and write access respectively. This denormalization avoids the need for complex lookups to determine access rights. \n\n7.  **Notifications**: Notifications are stored in a subcollection under each user `/users/{userId}/notifications/{notificationId}`. This ensures that a user can only query their own notifications, which is a secure and scalable pattern. Cloud Functions will be responsible for writing to this collection.\n\nThis design prioritizes Authorization Independence, eliminates `get()` calls in security rules, and enables secure `list` operations by segregating data based on access needs and denormalizing authorization context where necessary. All collections are designed with a homogeneous security posture in mind."
+  }
+}

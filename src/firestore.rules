@@ -1,0 +1,87 @@
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    // USER DATA: Private data, only owner can read/write.
+    match /users/{userId} {
+      allow read, write, delete: if isOwner(userId);
+    }
+    
+    // USER SUBCOLLECTIONS: Allow owner to manage their private subcollections.
+    match /users/{userId}/{collectionId}/{docId} {
+      allow read, write, delete: if isOwner(userId);
+    }
+    
+    // NOTIFICATIONS: Writable by Cloud Functions (no auth object), readable by owner.
+    match /users/{userId}/notifications/{notificationId} {
+        allow read, update: if isOwner(userId); // Allow user to read and mark as read
+        allow create, delete: if request.auth == null; // Allow backend functions to create/delete
+    }
+
+    // PUBLIC PROFILES: Readable by any signed-in user, writable only by owner.
+    match /publicProfiles/{userId} {
+      allow get, list: if isSignedIn();
+      allow create, update, delete: if isOwner(userId);
+    }
+    
+    // USERNAMES: Used for uniqueness check. Readable by any signed-in user, create only by owner.
+    match /usernames/{username} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+    }
+
+    // POSTS: Readable by signed-in users, create by author, update/delete by author.
+    match /posts/{postId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn() && isOwner(request.resource.data.authorId);
+      allow update, delete: if isOwner(get(/databases/$(database)/documents/posts/$(postId)).data.authorId);
+    }
+
+    // COMMENTS: Readable/creatable by signed-in users, editable only by comment or post author.
+    match /posts/{postId}/comments/{commentId} {
+      allow read, create: if isSignedIn();
+      allow update, delete: if isOwner(resource.data.authorId) || isOwner(get(/databases/$(database)/documents/posts/$(postId)).data.authorId);
+    }
+      
+    // LIKES: Readable by anyone, but only the owner can create/delete their own like.
+    match /posts/{postId}/likes/{userId} {
+      allow read: if isSignedIn();
+      allow create, delete: if isOwner(userId);
+    }
+    
+    // MESSAGES: Readable/creatable only by participants of the chat.
+    match /messages/{chatId}/chat/{messageId} {
+      allow read, create: if isSignedIn() && request.auth.uid in chatId.split('-');
+    }
+    
+    // USER CONVERSATIONS: Private list of chats for each user.
+    match /users/{userId}/conversations/{peerId} {
+        allow read, write, delete: if isOwner(userId);
+    }
+    
+    // EVENTS: Creatable by any signed-in user. Readable only by participants.
+    // Update/delete only by the event creator.
+    match /events/{eventId} {
+      allow create: if isSignedIn();
+      allow read: if isSignedIn() && request.auth.uid in resource.data.participantIds;
+      allow update, delete: if isOwner(resource.data.createdBy);
+    }
+
+    // VOLUNTEERS: Any signed-in user can create an application.
+    // Applications are not readable by other users to maintain privacy.
+    match /volunteers/{volunteerId} {
+      allow create: if isSignedIn();
+      allow read, update, delete: if false; // Only backend/admin should access
+    }
+  }
+}
