@@ -55,4 +55,5 @@ const nextConfig = {
   },
 };
 
+// This is a trigger comment for a new build.
 module.exports = nextConfig;
