@@ -66,4 +66,5 @@ const nextConfig = {
 
 // This is a trigger comment for a new build. Triggering new build after env var update.
 // Triggering new build after granting secret access.
+// Final trigger for deployment after granting secret access.
 module.exports = nextConfig;
