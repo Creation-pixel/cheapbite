@@ -64,5 +64,5 @@ const nextConfig = {
   }
 };
 
-// This is a trigger comment for a new build.
+// This is a trigger comment for a new build. Triggering new build after env var update.
 module.exports = nextConfig;
